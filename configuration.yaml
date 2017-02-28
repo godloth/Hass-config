@@ -3,8 +3,8 @@ homeassistant:
   name: Home
 #  
   # Location required to calculate the time the sun rises and sets
-  latitude: 45.315491
-  longitude: -73.189122
+  latitude: redacted
+  longitude: redacted
   
   # Impacts weather/sunrise data
   elevation: 42
@@ -62,7 +62,7 @@ media_player:
     platform: kodi
     host: 192.168.0.3
     port: 8081
-    username: kodi
+    username: redacted
     password: !secret kodi_password
     turn_off_action: quit
     name: Media Centre Salon
@@ -120,21 +120,21 @@ panel_iframe:
 
 zone:
   name: Home
-  latitude: 45.316425
-  longitude: -73.187807
+  latitude: redacted
+  longitude: redacted
   radius: 150
   icon: mdi:home-map-marker
 zone 2:
   name: Travail_Phil
-  latitude: 45.46856133737179
-  longitude: -73.53948938667172
+  latitude: redacted
+  longitude: redacted
   radius: 150
   icon: mdi:domain
 
 zone 3:
   name: travail_Catherine
-  latitude: 45.34232709833964
-  longitude: -73.28873032962179
+  latitude: redacted
+  longitude: redacted
   radius: 150
   icon: mdi:castle
 
@@ -193,7 +193,7 @@ light:
 device_tracker:
   - platform: ddwrt
     host: 192.168.0.1
-    username: paudet1
+    username: "redacted"
     password: !secret router_pass
     track_new_devices: True
     interval_seconds: 10
@@ -213,7 +213,7 @@ device_tracker:
 #   - platform: bluetooth_le_tracker
 #    track_new_devices: yes
 #    interval_seconds: 60
-#ssh    consider_home: 180
+#    consider_home: 180
 #    scan_duration: 30
 #  - platform: nmap_tracker
 #    hosts: 192.168.0.1/24
@@ -227,7 +227,7 @@ camera:
   - platform: mjpeg
     mjpeg_url: http://192.168.0.102:8080/video2.mjpg
     name: Caméra porte arrière
-    username: admin
+    username: "redacted"
     password: !secret cam_pass
   
 
@@ -288,16 +288,16 @@ switch:
   - platform: command_line
     switches:
       laundryroom_light:
-        command_on: 'curl -X POST https://maker.ifttt.com/trigger/{open_light_lavage}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
-        command_off: 'curl -X POST https://maker.ifttt.com/trigger/{"close_light_lavage"}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
+        command_on: 'curl -X POST https://maker.ifttt.com/trigger/{open_light_lavage}/with/key/redacted'
+        command_off: 'curl -X POST https://maker.ifttt.com/trigger/{"close_light_lavage"}/with/key/redacted'
         friendly_name: switch lumière salle de lavage
 
 
   - platform: command_line
     switches:
       stop_start_motion:
-        command_on: sshpass -p '970infosys' ssh pi@pi2 "sudo systemctl start motion.service"
-        command_off: sshpass -p '970infosys' ssh pi@pi2 "sudo systemctl stop motion.service"
+        command_on: sshpass -p 'redacted' ssh pi@pi2 "sudo systemctl start motion.service"
+        command_off: sshpass -p 'redacted' ssh pi@pi2 "sudo systemctl stop motion.service"
 
                                         ##################################################
                                         #                                                #
@@ -324,6 +324,6 @@ shell_command:
   start_kodi: "bash /home/hass/bash/turn_on.sh"
   pause_motion_detection: 'wget -q http://192.168.0.3:8090/0/detection/pause  -O /dev/null'
   start_motion_detection: 'wget -q http://192.168.0.3:8090/0/detection/start -O /dev/null'
-  open_light_lavage: 'curl -X POST https://maker.ifttt.com/trigger/{open_light_lavage}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
-  close_light_lavage: 'curl -X POST https://maker.ifttt.com/trigger/{"close_light_lavage"}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
+  open_light_lavage: 'curl -X POST https://maker.ifttt.com/trigger/{open_light_lavage}/with/key/redacted'
+  close_light_lavage: 'curl -X POST https://maker.ifttt.com/trigger/{"close_light_lavage"}/with/key/redacted'
 

@@ -115,8 +115,8 @@
 #############################################
 #sensor 55:                     			#
 #    platform: wunderground     			#
-#    api_key: cbc60ad4906d6cea  			#
-#    pws_id: IQUEBECS19         			#
+#    api_key: redacted			#
+#    pws_id: redacted         			#
 #                               			#
 #############################################
 #

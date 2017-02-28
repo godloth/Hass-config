@@ -1,12 +1,12 @@
 - platform: pushbullet
   name: Pushbullet
-  api_key: o.zGciqBTR68uJeUJpv8kSsZXCAAUImwZu
+  api_key: redacted
 - platform: twilio_sms
   name: twillio
-  account_sid: AC9af608a6b2bb66fd4c9fbf0c026493a9
-  auth_token: 5377f9794dca7a5bd6d725cf0cd4a0b7
+  account_sid: redacted
+  auth_token: redacted
   from_number: +14387938982
 - platform: message_bird
-  api_key: live_jUre4fkXYrRQ2rdu80gwYFePm
+  api_key: redacted
   name: bird
   sender: Philippe
