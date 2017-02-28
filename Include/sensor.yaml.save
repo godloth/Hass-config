@@ -1,0 +1,135 @@
+  - platform: cpuspeed
+    name: CPU 
+  - platform: systemmonitor
+    resources:
+      - type: memory_free
+      - type: memory_use_percent
+      - type: processor_use
+      - type: since_last_boot
+      - type: network_in
+        arg: eth0
+      - type: network_out
+        arg: eth0
+      - type: ipv4_address
+        arg: eth0
+#     - type: network_in
+#       arg: wlan0
+#     - type: network_out
+#       arg: wlan0
+#     - type: ipv4_address
+#       arg: wlan0
+      - type: swap_use 
+      - type: swap_free
+      
+  - platform: darksky
+    api_key: !secret darksky_key
+    monitored_conditions:
+      - icon
+      - temperature
+      - apparent_temperature
+      - precip_probability
+      - wind_speed
+      - humidity
+      - temperature_min
+      - temperature_max
+#   - apparent_temperature_max
+#   - apparent_temperature_min
+#   - precip_intensity_max
+#   - summary
+#   - nearest_storm_distance
+#   - nearest_storm_bearing
+#   - precip_type
+#   - precip_intensity
+#   - dew_point
+#   - wind_bearing
+#   - cloud_cover
+#   - pressure
+#   - visibility
+#   - ozone
+#   - minutely_summary
+#   - hourly_summary
+#   - daily_summary
+
+  - platform: speedtest
+    minute: 30
+    hour:
+      - 0
+      - 6
+      - 12
+      - 18
+    monitored_conditions:
+      - download
+      - upload
+
+  - platform: command_line
+    name: CPU Temperature
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    unit_of_measurement: "°C"
+    value_template: '{{ value | multiply(0.001) }}'
+
+# time tracking
+  - platform: time_
+date
+    display_options:
+      - 'time'
+      - 'date'
+
+  - platform: rest
+    resource: http://ip.jsontest.com
+    name: External IP
+    value_template: '{{ value_json.ip }}'
+
+  - platform: hydroquebec
+    username: philippe0104
+    password: !secret hydroquebec_pass
+    monitored_variables:
+      - period_total_bill
+      - period_length
+      - period_total_days
+      - period_mean_daily_bill
+      - period_mean_daily_consumption
+      - period_total_consumption
+      - period_lower_price_consumption
+      - period_higher_price_consumption
+      - yesterday_total_consumption
+      - yesterday_lower_price_consumption
+      - yesterday_higher_price_consumption
+
+
+  - platform: command_line
+    name: External VPN IP
+    command: ssh pi2 '(wget -q -O - http://ip.jsontest.com )' > /tmp/ipaddress.json; cat /tmp/ipaddress.json | jq --raw-output -r '.ip'
+    scan_interval: 360
+
+  - platform: command_line
+    name: Picture last taken
+    command: ssh pi2 'date -r /home/pi/Sec_cam_photos/ '+%Y-%m-%d, %H:%M''
+    scan_interval: 21
+
+  - platform: command_line
+    name: Last motion detected
+    command: date -r /home/pi/log.log '+%Y-%m-%d, %H:%M'
+    scan_interval: 15
+
+#############################################
+#    Weather underground  not used now      #
+#############################################
+#sensor 55:                     			#
+#    platform: wunderground     			#
+#
+#                               			#
+#############################################
+#
+#
+#        
+  - platform: time_date
+    display_options:
+      - 'date_time'
+  - platform: template
+    sensors:
+      controle_sensor:
+        scan_interval: 10
+        friendly_name: Dernière détection de mouvement depuis
+        value_template: '{% if states.sensor.last_motion_detected.last_updated is undefined %}{{"00:00:00"}}{% else %}{{ ((as_timestamp(states.sensor.date__time.last_updated)-as_timestamp(states.sensor.last_motion_detected.last_updated))|timestamp_utc)[11:19] }}{% endif %}'
+        entity_id:
+          - sensor.date__time

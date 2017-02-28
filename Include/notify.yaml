@@ -1,0 +1,12 @@
+- platform: pushbullet
+  name: Pushbullet
+  api_key: redacted
+- platform: twilio_sms
+  name: twillio
+  account_sid: redacted
+  auth_token: redacted
+  from_number: +14387938982
+- platform: message_bird
+  api_key: redacted
+  name: bird
+  sender: Philippe

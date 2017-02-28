@@ -1,0 +1,222 @@
+                        #######################################
+                        #           Views                     #
+                        #######################################
+Extérieur:
+  view: true
+  entities:
+   - scene.all_exterior_lights
+   - camera.backdoor_cam
+   - switch.lumire_marche
+   - light.mur_exterieur
+   - light.fontaine
+   - script.reset_blue
+   - group.ext_lights
+   - group.Remises
+
+
+
+Tracker:
+  view: true
+  entities:
+   - group.device_tracking
+   - group.weather
+
+
+  
+#default_view:
+#  view: true
+#  entities:
+#   - automation.update_available_notifications
+#   - group.weblinks
+#   - group.system
+#   - group.multimedia
+
+MGMT:
+  view: true
+  entities:
+   - group.pi_mgmt
+   - group.pi1_info
+   - group.Hass_info
+   - group.Camera_mgmt
+
+Cuisine:
+  view: true
+  entities:
+   - group.switch_cuisine
+Salon:
+  view: true
+  entities:
+   - group.switch_salon
+   - group.Multimedia
+   - input_select.tvsource
+
+                        #######################################
+                        #           FGroups                   #
+                        #######################################
+   
+Détection de présence:
+  entities:
+   - device_tracker.cellphil
+   - device_tracker.cellcathou
+   - device_tracker.cellaudrey
+   - device_tracker.cellvincent
+
+Détection d'invités:
+  entities:
+   - device_tracker.cellvalerie
+   - device_tracker.cellantoine
+   - device_tracker.celldenis
+
+Composantes réseaux:
+  entities:
+   - device_tracker.canonprint
+   - device_tracker.cathoutele
+   - device_tracker.ipad
+   - device_tracker.pi1
+   - device_tracker.pi2
+   - device_tracker.dvdsony
+   - device_tracker.surfacepro
+   - device_tracker.wl100989
+   - device_tracker.budlight
+   - device_tracker.extcam1
+   - device_tracker.ps4vince
+   - device_tracker.patioled
+   - device_tracker.dsantoine
+   - device_tracker.retropie
+   - device_tracker.wl140429
+   - device_tracker.philippesmbp
+
+Weblinks:
+  entities:
+   - weblink.camera
+   - weblink.home_assistant
+   - weblink.router
+   - weblink.webmin
+
+Pi2 info:
+  entities:
+   - sensor.external_vpn_ip
+
+
+Pi1 info:
+  entities:
+   - sensor.cpu_temperature
+   - sensor.cpu
+   - sensor.cpu_use
+   - sensor.ram_use
+   - sensor.ram_free
+   - sensor.swap_use
+   - sensor.swap_free
+   - sensor.ipv4_address_eth0
+   - sensor.received_eth0
+   - sensor.sent_eth0
+   - sensor.ipv4_address_wlan0
+   - sensor.received_wlan0
+   - sensor.sent_wlan0
+   - sensor.since_last_boot
+   - sensor.external_ip
+   - sensor.speedtest_download
+   - sensor.speedtest_upload
+
+Hass info:
+  entities:
+   - updater.updater
+
+pi mgmt:
+  entities:
+   - script.reboot_ha
+   - script.reboot_pi
+   - script.start_kodi
+
+Camera mgmt:
+  entities:
+   - switch.Camera_On_off
+   - script.reset_cam
+
+Sécurité:
+  entities:
+   - camera.camera_interieur
+   - sensor.Picture_last_taken
+   - camera.camera_porte_arriere
+   - switch.cam_record
+   - sensor.date__time
+   - sensor.controle_sensor
+   - sensor.cam_motion
+   - switch.cam_detection
+   - sensor.last_motion_detected
+   - sensor.motion_detected
+
+Ext lights:
+  entities:
+   - switch.lumiere_marche
+   - light.mur_exterieur
+   - light.fontaine
+   - switch.Lumiere_noel
+   - switch.prise_salon
+
+Remises:
+  entities:
+   - switch.lumire_remise
+
+Multimedia:
+  entities:
+   - media_player.media_centre_salon
+
+Switch Cuisine:
+  entities:
+   - switch.prise_cuisine
+      
+Switch Salon:
+  entities:
+   - switch.prise_salon_porte
+   - switch.prise_salon_lumiere
+
+Meteo:
+  entities:
+   - sensor.dark_sky_icon
+   - sensor.dark_sky_temperature
+   - sensor.dark_sky_wind_speed
+   - sensor.dark_sky_precip_probability
+   - sensor.dark_sky_humidity
+   - sensor.dark_sky_apparent_temperature
+   - sensor.dark_sky_daily_low_temperature
+   - sensor.dark_sky_daily_high_temperature
+   - sensor.dark_sky_cloud_coverage
+   - sensor.dark_sky_daily_high_apparent_temperature
+   - sensor.dark_sky_daily_low_apparent_temperature
+   - sensor.dark_sky_daily_max_precip_intensity
+   - sensor.dark_sky_daily_summary
+   - sensor.dark_sky_dew_point
+   - sensor.dark_sky_hourly_summary
+   - sensor.dark_sky_minutely_summary
+   - sensor.dark_sky_nearest_storm_bearing
+   - sensor.dark_sky_nearest_storm_distance
+   - sensor.dark_sky_ozone
+   - sensor.dark_sky_precip
+   - sensor.dark_sky_precip_intensity
+   - sensor.dark_sky_pressure
+   - sensor.dark_sky_summary
+   - sensor.dark_sky_visibility
+   - sensor.dark_sky_wind_bearing
+
+
+Hydro Quebec:
+  entities:
+   - sensor.hydroquebec_yesterday_total_consumption
+   - sensor.hydroquebec_yesterday_lower_price_consumption
+   - sensor.hydroquebec_yesterday_higher_price_consumption
+   - sensor.hydroquebec_period_total_bill
+   - sensor.hydroquebec_period_total_days
+   - sensor.hydroquebec_period_length
+   - sensor.hydroquebec_period_mean_daily_bill
+   - sensor.hydroquebec_period_mean_daily_consumption
+   - sensor.hydroquebec_period_total_consumption
+   - sensor.hydroquebec_period_lower_price_consumption
+   - sensor.hydroquebec_period_higher_price_consumption
+
+   
+Time and dates:
+  entities:
+   - sun.sun
+   - sensor.time
+   - sensor.date

@@ -1,0 +1,92 @@
+            
+
+                                         #################################################
+                                         #                                               #
+                                         #                 Scripts                       #
+                                         #                                               #
+                                         #################################################
+
+#  reset_blue:
+#    sequence:
+#      - service: switch.turn_on
+#        entity_id: switch.lumire_piscine
+#      - delay:
+#          milliseconds: 2100
+#      - service: switch.turn_off
+#        entity_id: switch.lumire_piscine
+#      - delay:
+#          milliseconds: 2100
+#      - service: switch.turn_on
+#        entity_id: switch.lumire_piscine
+#      - delay:
+#          milliseconds: 100
+
+          
+
+  reboot_pi:
+    alias: Reboot Raspi 3
+    sequence:
+       service: shell_command.pi
+
+  reboot_ha:
+    alias: Restart Home Assistant
+    sequence:
+       service: homeassistant.restart
+
+  start_kodi:
+    alias: Start Media Center
+    sequence:
+       service: shell_command.start_kodi
+       
+  reset_cam:
+    alias: Reset Backdoor Cam
+    sequence:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.Camera_On_off
+      - service: switch.turn_on
+        data:
+          entity_id: switch.Camera_On_off
+
+  timed_light_salle_lavage:
+    alias: "Turn on light and set timer"
+    sequence:
+      # Cancel ev. old timers
+      - service: script.turn_off
+        data:
+          entity_id: script.timer_off
+      - service: ifttt.trigger
+        data: {"event":"Open_light_lavage"}
+      # Set new timer
+      - service: script.turn_on
+        data:
+          entity_id: script.timer_off
+
+  timer_off:
+    alias: "Turn off light after 10 minutes"
+    sequence:
+      - delay:
+          minutes: 05
+      - service: ifttt.trigger
+        data: {"event":"Close_light_lavage"}
+
+  pause_motion:
+    alias: Pause Camera recording
+    sequence:
+       service: shell_command.pause_motion_detection
+  start_motion:
+    alias: Start Camera recording
+    sequence:
+       service: shell_command.start_motion_detection
+       
+  turn_light_on_lavage:
+    alias: Turn light on salle lavage
+    sequence:
+      service: ifttt.trigger
+      data: {"event": "Open_light_lavage"}
+
+  turn_light_off_lavage:
+    alias: Turn light off salle lavage
+    sequence:
+      service: ifttt.trigger
+      data: {"event": "Close_light_lavage"}

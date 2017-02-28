@@ -1,0 +1,12 @@
+  entities:
+   - name: Router
+     url: http://192.168.0.1/
+     icon: mdi:router-wireless
+   - name: Home Assistant
+     url: https://home-assistant.io
+   - name: Webmin
+     url: https://192.168.0.2:10000/
+     icon: mdi:brightness-7
+   - name: Camera
+     url: http://192.168.0.105:8080/
+     icon: mdi:camera-front
