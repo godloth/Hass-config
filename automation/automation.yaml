@@ -1,0 +1,361 @@
+##########################################
+##       Automation                     ##
+##########################################
+
+##########################################
+#           utilities                    #
+##########################################
+
+#  - alias: Bouilloir_cuisine
+#    trigger:
+#      platform: state
+#      entity_id: sensor.time
+#      state: "06:42"
+#    action:
+#      service: homeassistant.turn_on
+#      entity_id: switch.comptoirbouilloir
+
+
+      
+#########################################
+#       Logging and monitoring          #
+#########################################
+
+############# IFTTT ####################
+
+#####   Notifications   ####
+
+#  - alias: Startup Notification
+#    trigger:
+#      platform: event
+#      event_type: homeassistant_start
+#    action:
+#      service: ifttt.trigger
+#      data: {"event":"HA_notifications", "value1":"---", "value2":"Home Assistant has been restarted", "value3":"---"}
+
+  - alias: Update Available Vignette
+    trigger:
+      platform: state
+      entity_id: updater.updater
+    action:
+      service: persistent_notification.create
+      data: { "notification_id": "1114", "title": "Home assistant", "message": " Une nouvelle version de Home Assistant est disponible https://home-assistant.io/ "}
+
+  - alias: Login Failure
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.badlogin
+      above: 1
+    action:
+      service: ifttt.trigger
+      data: {"event":"HA_notifications", "value1":"---", "value2":"Login failure detected", "value3":"---"}
+########################################
+#          Salle de lavage             #
+########################################
+
+#  - alias: Turn on washing room lights when there is movement
+#    trigger:
+#      platform: state
+#      entity_id: sensor.lavage
+#      to: 'on'
+#    action:
+#      service: homeassistant.turn_on
+#      entity_id: script.timed_light_salle_lavage
+
+  - alias: Lights on/off based on motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.lavage_motion
+        to: 'on'
+      - platform: state
+        entity_id: binary_sensor.lavage_motion
+        to: 'off'
+        for:
+          minutes: 5
+          seconds: 01
+    action:
+      service_template: >
+        {% if trigger.to_state.state == "on" %}homeassistant.turn_on{% elif trigger.to_state.state == "off" %}homeassistant.turn_off{% endif %}
+      entity_id: switch.laundryroom_light
+
+
+########################################
+#          Alarm control               #
+########################################      
+
+  - alias: Everyone Left the house
+    trigger:
+      platform: state
+      entity_id: group.detection_de_presence
+      to: 'not_home'
+    action:
+      - service: ifttt.trigger
+        data: {"event":"Arm alarm"}
+      #- service: homeassistant.turn_on
+      #  entity_id: switch.prise_salon_porte
+      - service: homeassistant.turn_on
+        entity_id: switch.cam_record
+
+
+  - alias: Someone is home
+    trigger:
+      platform: state
+      entity_id: group.detection_de_presence
+      from: 'not_home'
+      to: 'home'
+    action:
+      - service: ifttt.trigger
+        data: {"event":"disarm alarm"}
+     # - service: homeassistant.turn_off
+     #   entity_id: switch.prise_salon_porte
+      
+#### Automatisation camera recording , famille non présente####
+#### Stopper l'enregistrement si famille présente et que Invité non présent ou invité présent mais audrey ou philippe sont à la maison ###
+  - alias: Stop recording if someone home
+    trigger:
+      platform: state
+      entity_id: group.detection_de_presence
+      to: 'home'
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: group.detection_dinvites
+          state: 'not_home'
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: device_tracker.cellaudrey
+            state: 'home'
+          - condition: state
+            entity_id: device_tracker.cellphil
+            state: 'home'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: switch.cam_record
+
+  - alias: Start recording when no one is there 
+    trigger:
+      platform: state
+      entity_id: group.detection_de_presence
+      to: 'not_home'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: switch.cam_record
+###test###
+#### open light in living room if recording and at night when no one is home ####
+
+  - alias: open light living room
+    trigger:
+      platform: time
+      minutes: '/5'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: switch.cam_record
+          state : 'on'
+        - condition: state
+          entity_id: sun.sun
+          state: 'below_horizon'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: switch.prise_salon_lumiere
+
+### open light in the morning if sun is down#####
+#quand state de controle sensor = 00:00:00
+#turn lumiere salon on
+#  si sun = below horizon 
+#  et jour de travail  
+
+  - alias: living room turn on weekdays morning
+    trigger:
+      platform: state
+      entity_id: sensor.motion_detected
+      to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: sun.sun
+          state: 'below_horizon'
+        - condition: time
+          after: '05:00:00'
+          before: '17:00:00'
+          weekday:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+    action:
+      - service: homeassistant.turn_on
+        entity_id: switch.prise_salon_lumiere
+
+  - alias: close de light when leaving or if sunset
+    trigger: 
+      platform: state
+      entity_id: sun.sun
+      to: 'above_horizon'
+    condition:
+       condition: state
+       entity_id: switch.prise_salon_lumiere
+       state: 'on'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: switch.prise_salon_lumiere
+      - service: homeassistant.turn_off
+        entity_id: switch.prise_salon_lumiere
+
+    
+
+
+### Shutdown motion when Kodi playing movies and open lights if sun down ###
+  - alias: Pause motion
+    trigger:
+      platform: state
+      entity_id: media_player.media_centre_salon
+      to: playing
+    action:
+      - service: switch.turn_off
+        entity_id: switch.stop_start_motion
+      - service: switch.turn_off
+        entity_id: switch.prise_salon_lumiere
+
+
+  - alias: Start motion
+    trigger:
+      platform: state
+      entity_id: media_player.media_centre_salon
+      to: idle
+    action:
+      - service: switch.turn_on
+        entity_id: switch.stop_start_motion
+
+
+  - alias: open light when movie stops
+    trigger:
+      platform: state
+      entity_id: media_player.media_centre_salon
+      to: idle
+    condition:
+      condition: state
+      entity_id: sun.sun
+      state: 'below_horizon'
+    action:
+      service: switch.turn_on
+      entity_id: switch.prise_salon_lumiere
+
+
+
+#  pause_motion_detection: 'wget -q http://192.168.0.3:8090/0/detection/pause  -O /dev/null'
+#  start_motion_detection: 'wget -q http://192.168.0.3:8090/0/detection/start -O /dev/null'
+
+
+##############################
+####  test with sunset ########
+#  - alias: The sun has set
+#    trigger:
+#      platform: sun
+#      event: sunset
+#    action:
+#      service: ifttt.trigger
+#      data: {"event":"HA_notification", "value1":"---", "value2":"Le soleil s'est levé", "value3":"---"}
+
+########################################
+#           Lights contol              #
+########################################
+
+#####     Exterior back           ######
+
+  - alias: Outside Lights on
+    trigger:
+      platform: sun
+      event: sunset
+      offset: "-02:00:00"
+    action:
+      service: homeassistant.turn_on
+      entity_id: group.ext_lights
+
+  - alias: outside lights off
+    trigger:
+      platform: sun
+      event: sunrise
+      offset: '-06:00:00'
+    action:
+      service: homeassistant.turn_off
+      entity_id: group.ext_lights
+
+########################################
+#           Select TV input            #
+########################################
+
+
+#  - alias: Switch TV input1
+#    trigger:
+#      platform: state
+#      entity_id: input_select.tvsource
+#      to: "Videotron"
+#    action:
+#      service: hdmi_cec.select_device
+#      data: { "device": "Videotron" }
+#  - alias: Switch TV input2
+#    trigger:
+#      platform: state
+#      entity_id: input_select.tvsource
+#      to: "Blueray"
+#    action:
+#      service: hdmi_cec.select_device
+#      data: { "device": "Blueray" }
+#  - alias: Switch TV input3
+#    trigger:
+#      platform: state
+#      entity_id: input_select.tvsource
+#      to: "Kodi"
+#    action:
+#      service: hdmi_cec.select_device
+#      data: { "device": "Kodi" }
+
+
+      
+      
+      
+      
+      
+      
+####    Set pool light to blue    ####
+
+#########    below to be completed    ##############################
+#
+#
+#  - alias: Blue#
+#
+#    trigger:
+#    - platform: sun
+#      event: 'sunset'
+#      offset: '-00:05:00'
+#
+#    condition:
+#    - condition: state
+#      entity_id: input_boolean.exterior_on_sunset
+#      state: 'off'
+#    - condition: state
+#      entity_id: input_select.holiday
+#      state: "St. Patrick's Day"
+#
+#    action:
+#    - service: switch.turn_on
+#      entity_id: switch.lumiere_piscine
+#    - delay:
+#        milliseconds: 50
+#    - service: switch.turn_off
+#      entity_id: switch.lumiere_piscine
+#    - delay:
+#        milliseconds: 2000
+#    - service: switch.turn_on
+#      entity_id: switch.lumiere_piscine
+#
+
+############################## working curl example to create sensor and set state #############################
+##  curl -X POST -H "Content-Type:application/json" https://homehass.ddns.net/api/states/sensor.cam_motion?api_password=1409infosys -d '{"attributes": {"friendly_name": "Motion sensor Cam intérieur"}, "state": "on"}'
+##################################
