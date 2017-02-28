@@ -357,5 +357,5 @@
 #
 
 ############################## working curl example to create sensor and set state #############################
-##  curl -X POST -H "Content-Type:application/json" https://homehass.ddns.net/api/states/sensor.cam_motion?api_password=1409infosys -d '{"attributes": {"friendly_name": "Motion sensor Cam intérieur"}, "state": "on"}'
+##  curl -X POST -H "Content-Type:application/json" https://homehass.ddns.net/api/states/sensor.cam_motion?api_password=redacted -d '{"attributes": {"friendly_name": "Motion sensor Cam intérieur"}, "state": "on"}'
 ##################################
