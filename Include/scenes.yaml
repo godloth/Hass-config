@@ -1,0 +1,11 @@
+
+  - name: All exterior lights
+    entities:
+      light.fontaine:
+          state: on
+          brightness: 100
+          rgb_color: [255, 255, 255]
+      light.mur_exterieur:
+          state: on
+          brightness: 100
+          rgb_color: [255, 0, 0]
