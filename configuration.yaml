@@ -1,0 +1,329 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+#  
+  # Location required to calculate the time the sun rises and sets
+  latitude: 45.315491
+  longitude: -73.189122
+  
+  # Impacts weather/sunrise data
+  elevation: 42
+  
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: America/Toronto
+
+#  customize: !include include/customization.yaml
+
+# Show links to resources in log and frontend
+# introduction:
+
+# Enables the frontend
+frontend:
+
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret http_password
+  ssl_certificate: '/etc/letsencrypt/live/homehass.ddns.net/fullchain.pem'
+  ssl_key: '/etc/letsencrypt/live/homehass.ddns.net/privkey.pem'
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+#conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+#recorder:
+#  purge_days: 5
+#  db_url: sqlite:///home/hass/.homeassistant/recorder
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+ifttt:
+  key: !secret ifttt_key
+
+
+##############################Media player ################################
+
+media_player:
+    platform: kodi
+    host: 192.168.0.3
+    port: 8081
+    username: kodi
+    password: !secret kodi_password
+    turn_off_action: quit
+    name: Media Centre Salon
+
+hdmi_cec:
+  host: 192.168.0.3
+  devices:
+    Panasonic: 0.0.0.0
+    Sound bar: 1.0.0.0
+#hdmi_cec:
+#  devices:
+#    0: TV
+#    1:
+#      0: TV
+#      1: Kodi
+#    2: Videotron
+#    3: Blueray
+
+
+
+#input_select:
+#  tvsource:
+#    name: Television source select
+#    options:
+#      - None
+#      - Blueray
+#      - Kodi
+#      - Videotron
+#    initial: None
+
+logger:
+  default: critical
+  logs:
+#    homeassistant.components.http: info
+#    homeassistant.core: info
+#    homeassistant.components.sensor.command_line: warn
+#    homeassistant.components.camera: critical
+    homeassistant.component.shell_command.pi: debug
+#    homeassistant.components.device_tracker: debug
+#    homeassistant.components.media_player.kodi: info
+    homeassistant.components.device_tracker.bluetooth_le_tracker: debug
+#    homeassistant.components.sensor: debug
+
+
+
+
+############################# Left menu add-on ##########################################################
+# Example configuration.yaml entry
+panel_iframe:
+  router:
+    title: Router
+    icon: mdi:router-wireless
+    url: http://192.168.0.1
+
+
+zone:
+  name: Home
+  latitude: 45.316425
+  longitude: -73.187807
+  radius: 150
+  icon: mdi:home-map-marker
+zone 2:
+  name: Travail_Phil
+  latitude: 45.46856133737179
+  longitude: -73.53948938667172
+  radius: 150
+  icon: mdi:domain
+
+zone 3:
+  name: travail_Catherine
+  latitude: 45.34232709833964
+  longitude: -73.28873032962179
+  radius: 150
+  icon: mdi:castle
+
+
+
+
+                                         #################################################
+                                         #                                               #
+                                         #                 Components                    #
+                                         #                                               #
+                                         #################################################
+
+                                         
+mqtt:
+  broker: 127.0.0.1
+  port: 1883
+  client_id: home-assistant-1
+  username: pi
+  password: !secret mqtt_pass
+
+                                         #################################################
+                                         #                                               #
+                                         #                 Sensors                       #
+                                         #                                               #
+                                         #################################################
+sensor: !include include/sensor.yaml
+
+                                        #################################################
+                                        #                                               #
+                                        #                WebLinks                       #
+                                        #                                               #
+                                        #################################################
+
+weblink: !include include/weblinks.yaml
+
+                                        ##################################################
+                                        #                                                #
+                                        #               Devices management               # 
+                                        #                                                #
+                                        ##################################################
+light:
+  platform: limitlessled
+  bridges:
+    - host: 192.168.0.108
+      version: 5
+      port: 8899
+      groups:
+      - number: 2
+        type: rgbw
+        name: fontaine
+      - number: 3
+        type: rgbw
+        name: Mur Exterieur
+
+
+device_tracker:
+  - platform: ddwrt
+    host: 192.168.0.1
+    username: paudet1
+    password: !secret router_pass
+    track_new_devices: True
+    interval_seconds: 10
+    consider_home: 180
+
+
+  - platform: bluetooth_tracker
+    track_new_devices: yes
+    interval_seconds: 60
+    consider_home: 300
+    scan_duration: 30
+#  - platform: icloud
+#    username: philippeaudet@outlook.com
+#    password: !secret icloud_pass
+#    interval_seconds: 180
+#    consider_home: 300
+#   - platform: bluetooth_le_tracker
+#    track_new_devices: yes
+#    interval_seconds: 60
+#ssh    consider_home: 180
+#    scan_duration: 30
+#  - platform: nmap_tracker
+#    hosts: 192.168.0.1/24
+#    home_interval: 180
+#    track_new_devices: True
+#    interval_seconds: 60
+
+
+# Example configuration.yaml entry
+camera:
+  - platform: mjpeg
+    mjpeg_url: http://192.168.0.102:8080/video2.mjpg
+    name: Caméra porte arrière
+    username: admin
+    password: !secret cam_pass
+  
+
+  - platform: mjpeg
+    mjpeg_url: http://192.168.0.3:8082
+    name: Caméra intérieur
+
+                                        ##################################################
+                                        #                                                #
+                                        #               Switches                         # 
+                                        #                                                #
+                                        ##################################################
+
+
+switch:
+  - platform: rpi_rf
+    gpio: 17
+    switches:
+      Lumière remise:
+        protocol: 1
+        pulselength: 181
+        code_on: 5264691
+        code_off: 5264700
+      Lumière Marche:
+        protocol: 1
+        pulselength: 181
+        code_on: 5264835
+        code_off: 5264844
+      Camera On_off:
+        protocol: 1
+        pulselength: 185
+        code_on: 5265155
+        code_off: 5265164
+      Prise salon lumiere:
+        protocol: 1
+        pulselength: 185
+        code_on: 5266691
+        code_off: 5266700
+      Prise salon porte:
+        protocol: 1
+        pulselength: 181
+        code_on: 5272835
+        code_off: 5272844
+#      Lumiere noel:
+#        protocol: 1
+#        pulselength: 185
+#        code_on: 5265155
+#        code_off: 5265164
+
+
+  - platform: command_line
+    switches:
+      cam_record:
+        command_on: 'wget -q http://192.168.0.3:8090/0/config/set?output_pictures=on  -O /dev/null'
+        command_off: 'wget -q http://192.168.0.3:8090/0/config/set?output_pictures=off  -O /dev/null'
+        friendly_name: Enregistrement en cours Caméra Intérieur
+
+  - platform: command_line
+    switches:
+      laundryroom_light:
+        command_on: 'curl -X POST https://maker.ifttt.com/trigger/{open_light_lavage}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
+        command_off: 'curl -X POST https://maker.ifttt.com/trigger/{"close_light_lavage"}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
+        friendly_name: switch lumière salle de lavage
+
+
+  - platform: command_line
+    switches:
+      stop_start_motion:
+        command_on: sshpass -p '970infosys' ssh pi@pi2 "sudo systemctl start motion.service"
+        command_off: sshpass -p '970infosys' ssh pi@pi2 "sudo systemctl stop motion.service"
+
+                                        ##################################################
+                                        #                                                #
+                                        #                   Includes                     #
+                                        #                                                #
+                                        ##################################################
+                                        
+automation: !include automation/automation.yaml
+scene: !include include/scenes.yaml
+group: !include include/groups.yaml
+#input_select: !include automation/input_select.yaml
+script: !include automation/scripts.yaml
+
+                                        ##################################################
+                                        #                                                #
+                                        #                   Shell command                #
+                                        #                                                #
+                                        ##################################################
+
+
+shell_command:
+  pi: "sudo /home/hass/.homeassistant/shutdown -r"
+  ha_r: "sudo systemctl restart home-assistant.service"
+  start_kodi: "bash /home/hass/bash/turn_on.sh"
+  pause_motion_detection: 'wget -q http://192.168.0.3:8090/0/detection/pause  -O /dev/null'
+  start_motion_detection: 'wget -q http://192.168.0.3:8090/0/detection/start -O /dev/null'
+  open_light_lavage: 'curl -X POST https://maker.ifttt.com/trigger/{open_light_lavage}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
+  close_light_lavage: 'curl -X POST https://maker.ifttt.com/trigger/{"close_light_lavage"}/with/key/gg7Ski5L-71okJildOECzWCQ_Ti8KRR6JXpI_4cFN3'
+
